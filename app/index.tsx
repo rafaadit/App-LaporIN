@@ -1,80 +1,63 @@
-import { View, Text, ScrollView } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, Text, Animated } from 'react-native';
 import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import HeroChatbotCard from '@/components/HeroChatbotCard';
-import Button from '@/components/Button';
 
-const features = [
-  { icon: 'camera' as const, title: 'Lapor Cepat', desc: 'Foto kerusakan & kirim dalam hitungan menit' },
-  { icon: 'eye' as const, title: 'Pantau Status', desc: 'Ikuti perkembangan laporan secara real-time' },
-  { icon: 'notifications' as const, title: 'Notifikasi', desc: 'Dapatkan update saat laporan ditangani' },
-];
+export default function SplashScreen() {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.8)).current;
+  const dot1 = useRef(new Animated.Value(0)).current;
+  const dot2 = useRef(new Animated.Value(0)).current;
+  const dot3 = useRef(new Animated.Value(0)).current;
 
-export default function LandingScreen() {
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 6, useNativeDriver: true }),
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(dot1, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.timing(dot2, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.timing(dot3, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.timing(dot1, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(dot2, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(dot3, { toValue: 0, duration: 400, useNativeDriver: true }),
+      ])
+    ).start();
+
+    const timer = setTimeout(() => {
+      router.replace('/onboarding' as any);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1" contentContainerClassName="pb-10">
-        {/* Hero */}
-        <View className="px-6 pt-8 pb-6 items-center">
-          <View className="flex-row items-center gap-2 bg-lavender/60 border border-gray-100 rounded-full px-4 py-1.5 mb-6">
-            <Ionicons name="flash" size={14} color="#3b82f6" />
-            <Text className="text-sm text-gray-600">Platform Pengaduan Fasilitas Umum</Text>
-          </View>
+    <View className="flex-1 items-center justify-center bg-white">
+      {/* Decorative circles */}
+      <View className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-blue-50" />
+      <View className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-purple-50" />
 
-          <Text className="text-4xl font-bold text-gray-900 text-center leading-tight">
-            Suara warga,{'\n'}
-            <Text className="text-blue-600">kota lebih baik</Text>
-          </Text>
-          <Text className="text-gray-500 text-center mt-4 leading-6 px-2">
-            Laporkan kerusakan jalan, lampu, drainase, dan fasilitas umum lainnya.
-          </Text>
-
-          <View className="flex-row gap-3 mt-8 w-full">
-            <View className="flex-1">
-              <Button title="Daftar Gratis" onPress={() => router.push('/register')} variant="secondary" />
-            </View>
-            <View className="flex-1">
-              <Button title="Masuk" onPress={() => router.push('/login')} variant="outline" />
-            </View>
-          </View>
+      <Animated.View style={{ opacity, transform: [{ scale }] }} className="items-center">
+        <View className="w-20 h-20 bg-blue-600 rounded-2xl items-center justify-center mb-4 shadow-lg shadow-blue-200">
+          <Ionicons name="location" size={40} color="white" />
         </View>
+        <Text className="text-3xl font-bold text-gray-900">LaporIn</Text>
+        <Text className="text-gray-500 mt-2">Pengaduan Fasilitas Umum</Text>
+      </Animated.View>
 
-        {/* Chatbot preview */}
-        <View className="px-6 mt-4">
-          <HeroChatbotCard />
-          <Text className="text-center text-xs text-gray-400 mt-3">
-            Coba chat dengan AI — masuk dulu untuk mulai melaporkan
-          </Text>
-        </View>
-
-        {/* Features */}
-        <View className="px-6 mt-10">
-          <Text className="text-xl font-bold text-gray-900 mb-4">Kenapa LaporIn?</Text>
-          <View className="gap-3">
-            {features.map((f) => (
-              <View key={f.title} className="bg-lavender/40 rounded-2xl p-4 flex-row items-center gap-4">
-                <View className="w-11 h-11 bg-blue-600 rounded-2xl items-center justify-center">
-                  <Ionicons name={f.icon} size={20} color="white" />
-                </View>
-                <View className="flex-1">
-                  <Text className="font-semibold text-gray-900 text-sm">{f.title}</Text>
-                  <Text className="text-xs text-gray-500 mt-0.5">{f.desc}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* CTA */}
-        <View className="mx-6 mt-10 bg-navy rounded-3xl p-8 items-center">
-          <Text className="text-xl font-bold text-white text-center">Siap melaporkan?</Text>
-          <Text className="text-gray-400 text-sm text-center mt-2 mb-6">
-            Bergabung dan jadilah bagian dari perubahan positif di kotamu.
-          </Text>
-          <Button title="Mulai Sekarang" onPress={() => router.push('/register')} className="w-full" />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      {/* Loading dots */}
+      <View className="absolute bottom-24 flex-row gap-2">
+        {[dot1, dot2, dot3].map((dot, i) => (
+          <Animated.View
+            key={i}
+            className="w-2 h-2 rounded-full bg-blue-600"
+            style={{ opacity: dot }}
+          />
+        ))}
+      </View>
+    </View>
   );
 }

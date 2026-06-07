@@ -9,15 +9,14 @@ export default function RootNavigator() {
   const segments = useSegments();
   const router = useRouter();
 
-  // Only redirect logged-in users away from public screens
+  // Only redirect logged-in users away from public screens (skip index — splash handles its own flow)
   useEffect(() => {
     if (isLoading || !user) return;
 
     const onLogin = segments[0] === 'login';
     const onRegister = segments[0] === 'register';
-    const onLanding = !segments[0];
 
-    if (onLogin || onRegister || onLanding) {
+    if (onLogin || onRegister) {
       router.replace('/(tabs)/home');
     }
   }, [user, isLoading, segments, router]);
@@ -34,6 +33,7 @@ export default function RootNavigator() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="login" />
         <Stack.Screen name="register" />
         <Stack.Screen name="(tabs)" />

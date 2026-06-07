@@ -47,7 +47,7 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 bg-lavender/30">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView contentContainerClassName="flex-grow justify-center px-6 py-8">
-          <Pressable onPress={() => router.back()} className="mb-6">
+          <Pressable onPress={() => router.replace('/onboarding')} className="mb-6">
             <Text className="text-blue-600 text-sm">← Kembali</Text>
           </Pressable>
 
